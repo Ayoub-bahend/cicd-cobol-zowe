@@ -1,0 +1,14 @@
+---
+- name: Upload COBOL program
+  ansible.builtin.shell: >
+    zowe files upload local-file src/cobol/TRAITEMENT-COMPTES-BANQUE.cbl
+    remote-path {{ remote_cobol_path }}
+    --zosmf-profile {{ zosmf_profile }}
+  register: upload_cobol
+
+- name: Upload JCL
+  ansible.builtin.shell: >
+    zowe files upload local-file src/jcl/run_TRAITEMENT.jcl
+    remote-path {{ remote_jcl_path }}
+    --zosmf-profile {{ zosmf_profile }}
+  register: upload_jcl
