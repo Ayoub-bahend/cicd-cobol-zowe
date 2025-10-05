@@ -1,0 +1,21 @@
+//COMPCOB  JOB (ACCT),'COMPILE COBOL',
+//         CLASS=A,MSGCLASS=X,MSGLEVEL=(1,1),NOTIFY=&SYSUID
+//* =======================================================
+//*  COMPILATION DU PROGRAMME TRAITEMENT-COMPTES-BANQUE
+//* =======================================================
+//STEP1    EXEC IGYCRCTL
+//COBOL.SYSIN   DD DSN=USER.COBOL.SRC(TRAITCOMP),DISP=SHR
+//COBOL.SYSLIB  DD DSN=USER.COBOL.COPYBOOKS,DISP=SHR
+//COBOL.SYSLIN  DD DSN=&&LOADSET,UNIT=SYSDA,SPACE=(CYL,(1,1)),
+//               DISP=(MOD,PASS)
+//COBOL.SYSOUT  DD SYSOUT=*
+//LKED     EXEC HEWL,PARM='LIST,XREF,MAP'
+//LKED.SYSLIN   DD DSN=&&LOADSET,DISP=(OLD,DELETE)
+//LKED.SYSUT1   DD UNIT=SYSDA,SPACE=(1024,(50,50))
+//LKED.SYSLMOD  DD DSN=USER.COBOL.LOAD(TRAITCOMP),DISP=SHR
+//LKED.SYSOUT   DD SYSOUT=*
+//*
+//* Notes :
+//* - Remplace USER.COBOL.SRC et USER.COBOL.COPYBOOKS par tes datasets.
+//* - Le membre (TRAITCOMP) doit contenir ton code COBOL.
+//* =======================================================
