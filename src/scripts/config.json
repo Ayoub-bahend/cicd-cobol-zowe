@@ -1,0 +1,10 @@
+{
+	"zosmf_profile": "mainframe-sandbox",
+	"host": "localhost",
+	"port": 1443,
+	"user": "demo",
+	"password": "demo123",
+	"remote_cobol_path": "/u/USER/COBOL",
+	"remote_jcl_path": "/u/USER/JCL"
+  }
+  
