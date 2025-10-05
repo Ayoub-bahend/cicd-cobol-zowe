@@ -1,0 +1,16 @@
+---
+- name: Submit JCL job
+  ansible.builtin.shell: >
+    zowe jobs submit local-file src/jcl/run_TRAITEMENT.jcl
+    --zosmf-profile {{ zosmf_profile }}
+  register: job_result
+
+- name: Monitor JCL output
+  ansible.builtin.shell: >
+    zowe jobs view job {{ job_result.stdout }} --rff JESMSGLG
+    --zosmf-profile {{ zosmf_profile }}
+  register: job_output
+
+- name: Show JCL job output
+  ansible.builtin.debug:
+    msg: "{{ job_output.stdout }}"
