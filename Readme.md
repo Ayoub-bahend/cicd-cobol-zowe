@@ -9,17 +9,17 @@ Le programme COBOL, `TRAITEMENT-COMPTES-BANQUE`, calcule les intérêts, appliqu
 ---
 
 ## Table des matières
-
-1. [Objectif du Projet](#objectif-du-projet)
-2. [Structure du Projet](#structure-du-projet)
-3. [Prérequis](#prérequis)
-4. [Configuration Locale](#configuration-locale)
-5. [Test du Pipeline Localement](#test-du-pipeline-localement)
-6. [CI/CD avec GitHub Actions](#cicd-avec-github-actions)
-7. [Ansible Playbook](#ansible-playbook)
-8. [Sécurité et GitHub Secrets](#sécurité-et-github-secrets)
-9. [Sources](#sources)
-10. [Licence](#licence)
+1. [Objectif du Projet](#objectif-du-projet)  
+2. [Structure du Projet](#structure-du-projet)  
+3. [Diagramme du Pipeline CI/CD](#diagramme-du-pipeline-cicd)  
+4. [Prérequis](#prérequis)  
+5. [Configuration Locale](#configuration-locale)  
+6. [Test du Pipeline Localement](#test-du-pipeline-localement)  
+7. [CI/CD avec GitHub Actions](#cicd-avec-github-actions)  
+8. [Ansible Playbook](#ansible-playbook)  
+9. [Sécurité et GitHub Secrets](#sécurité-et-github-secrets)  
+10. [Sources](#sources)  
+11. [Licence](#licence)  
 
 ---
 
@@ -68,7 +68,17 @@ Le projet illustre la modernisation d’un mainframe vers un environnement ouver
 
 
 ---
+## Diagramme du pipeline CI/CD
 
+```mermaid
+flowchart TD
+    A[Code COBOL] --> B[Push sur GitHub]
+    B --> C[Pipeline CI/CD - pipeline.yml]
+    C --> D[Compilation et Tests COBOL]
+    D --> E[Déploiement via Zowe CLI et Ansible - mainframe.yml]
+    E --> F[Monitoring et Logs Python]
+```
+---
 ## Prérequis
 
 - **Zowe CLI** pour interagir avec le mainframe.
