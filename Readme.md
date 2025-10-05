@@ -1,91 +1,71 @@
-# Gestion des Comptes Bancaires sur Mainframe
+# Projet CI/CD COBOL avec Zowe CLI, Ansible & GitHub Actions
 
-## Objectif du Projet
+Ce projet illustre la **mise en place d’un pipeline CI/CD** utilisant Git, Ansible et GitHub Actions pour automatiser la **compilation et le déploiement d’un programme COBOL** avec intégration SQL.  
+Le pipeline inclut également un **monitoring via Python** et l’**intégration de Zowe CLI** pour simuler la modernisation d’un mainframe vers un environnement ouvert.
 
-Ce projet a pour objectif de démontrer un processus complet de gestion des comptes bancaires sur un environnement mainframe. Il inclut le développement, le déploiement, l'exécution et la surveillance d'un programme COBOL qui traite des données de comptes bancaires. Le pipeline CI/CD est automatisé pour garantir un déploiement fluide et une exécution fiable.
+Le programme COBOL, `TRAITEMENT-COMPTES-BANQUE`, calcule les intérêts, applique des frais, et met à jour les soldes des comptes bancaires en fonction des données d’entrée.
 
-Le programme COBOL, `TRAITEMENT-COMPTES-BANQUE`, calcule les intérêts, applique des frais, et met à jour les soldes des comptes bancaires en fonction des données d'entrée.
+
+---
+
+## Table des matières
+
+1. [Objectif du Projet](#objectif-du-projet)
+2. [Structure du Projet](#structure-du-projet)
+3. [Prérequis](#prérequis)
+4. [Configuration Locale](#configuration-locale)
+5. [Test du Pipeline Localement](#test-du-pipeline-localement)
+6. [CI/CD avec GitHub Actions](#cicd-avec-github-actions)
+7. [Ansible Playbook](#ansible-playbook)
+8. [Sécurité et GitHub Secrets](#sécurité-et-github-secrets)
+9. [Sources](#sources)
+10. [Licence](#licence)
+
+---
+
+## Objectif du projet
+
+L'objectif de ce projet est de mettre en place un pipeline CI/CD complet pour automatiser le **développement, la compilation, le déploiement et le monitoring** d’un programme COBOL sur un environnement mainframe simulé.  
+Le projet illustre la modernisation d’un mainframe vers un environnement ouvert grâce à l’intégration de **Zowe CLI**, tout en garantissant une exécution fiable et traçable des traitements bancaires.
 
 ---
 
 ## Structure du Projet
+```
+├── .github
+│   └── workflows
+│       ├── mainframe.yml
+│       └── pipeline.yml
+├── .gitignore
+├── Readme.md
+└── src
+    ├── ansible
+    │   ├── inventory.yml
+    │   ├── playbook_deploy.yml
+    │   └── roles
+    │       └── mainframe
+    │           ├── tasks
+    │           │   ├── deploy.yml
+    │           │   └── monitor.yml
+    │           └── vars
+    │               └── mainframe_vars.yml
+    ├── cobol
+    │   └── TRAITEMENT-COMPTES-BANQUE.cbl
+    ├── copybooks
+    │   ├── CST.cpy
+    │   ├── ENTR.cpy
+    │   └── SORT.cpy
+    ├── data
+    │   └── COMPTES-IN.DAT
+    ├── jcl
+    │   ├── compile_TRAITEMENT.jcl
+    │   └── run_TRAITEMENT.jcl
+    └── scripts
+        ├── config.json
+        ├── deploy.sh
+        └── monitor.py
+```        
 
-### 1. **Fichiers COBOL et Copybooks**
-- **[`src/cobol/TRAITEMENT-COMPTES-BANQUE.cbl`](src/cobol/TRAITEMENT-COMPTES-BANQUE.cbl)**  
-  Programme principal qui traite les comptes bancaires. Il lit les données d'entrée, effectue des calculs (intérêts, frais) et écrit les résultats dans un fichier de sortie.
-
-- **[`src/copybooks/ENTR.cpy`](src/copybooks/ENTR.cpy)**  
-  Définit la structure des enregistrements de comptes d'entrée.
-
-- **[`src/copybooks/SORT.cpy`](src/copybooks/SORT.cpy)**  
-  Définit la structure des enregistrements de comptes de sortie.
-
-- **[`src/copybooks/CST.cpy`](src/copybooks/CST.cpy)**  
-  Contient les constantes et variables globales utilisées dans le programme COBOL.
-
----
-
-### 2. **Fichiers JCL**
-- **[`src/jcl/compile_TRAITEMENT.jcl`](src/jcl/compile_TRAITEMENT.jcl)**  
-  Script JCL pour compiler le programme COBOL sur le mainframe.
-
-- **[`src/jcl/run_TRAITEMENT.jcl`](src/jcl/run_TRAITEMENT.jcl)**  
-  Script JCL pour exécuter le programme COBOL sur le mainframe.
-
----
-
-### 3. **Scripts**
-- **[`src/scripts/deploy.sh`](src/scripts/deploy.sh)**  
-  Script Bash pour automatiser le déploiement des fichiers COBOL, copybooks et JCL sur le mainframe. Il soumet également les jobs de compilation et d'exécution.
-
-- **[`src/scripts/monitor.py`](src/scripts/monitor.py)**  
-  Script Python pour surveiller les sorties JES des jobs soumis. Il détecte les erreurs (`ERROR` ou `ABEND`) dans les logs.
-
-- **[`src/scripts/config.json`](src/scripts/config.json)**  
-  Fichier de configuration contenant les informations de connexion au mainframe (profil Zowe, chemins distants, etc.).
-
----
-
-### 4. **Ansible**
-- **[`src/ansible/inventory.yml`](src/ansible/inventory.yml)**  
-  Définit les hôtes cibles pour les tâches Ansible (ex. : mainframe sandbox).
-
-- **[`src/ansible/playbook_deploy.yml`](src/ansible/playbook_deploy.yml)**  
-  Playbook Ansible principal pour déployer le programme COBOL et exécuter les jobs JCL.
-
-- **[`src/ansible/roles/mainframe/tasks/deploy.yml`](src/ansible/roles/mainframe/tasks/deploy.yml)**  
-  Tâches Ansible pour uploader les fichiers COBOL et JCL sur le mainframe.
-
-- **[`src/ansible/roles/mainframe/tasks/monitor.yml`](src/ansible/roles/mainframe/tasks/monitor.yml)**  
-  Tâches Ansible pour soumettre et surveiller les jobs JCL.
-
-- **[`src/ansible/roles/mainframe/vars/mainframe_vars.yml`](src/ansible/roles/mainframe/vars/mainframe_vars.yml)**  
-  Variables utilisées dans les tâches Ansible (profil Zowe, chemins distants, etc.).
-
----
-
-### 5. **Workflows GitHub Actions**
-- **[`.github/workflows/pipeline.yml`](.github/workflows/pipeline.yml)**  
-  Pipeline CI/CD pour compiler et exécuter le programme COBOL localement avec GnuCOBOL.
-
-- **[`.github/workflows/mainframe.yml`](.github/workflows/mainframe.yml)**  
-  Pipeline CI/CD pour déployer et exécuter le programme COBOL sur le mainframe.
-
-- **[`.github/workflows/supervisor.yml`](.github/workflows/supervisor.yml)**  
-  Orchestrateur pour déclencher les workflows `pipeline.yml` et `mainframe.yml`.
-
----
-
-## Fonctionnement Global
-
-1. **Compilation et Exécution Locale**  
-   Le workflow `pipeline.yml` compile et exécute le programme COBOL localement à l'aide de GnuCOBOL.
-
-2. **Déploiement sur le Mainframe**  
-   Le workflow `mainframe.yml` déploie les fichiers COBOL, copybooks et JCL sur le mainframe, puis soumet les jobs pour compilation et exécution.
-
-3. **Surveillance des Jobs**  
-   Les scripts Ansible et Python surveillent les sorties JES pour détecter les erreurs et afficher les résultats.
 
 ---
 
@@ -95,12 +75,144 @@ Le programme COBOL, `TRAITEMENT-COMPTES-BANQUE`, calcule les intérêts, appliqu
 - **Ansible** pour l'automatisation des tâches.
 - **GnuCOBOL** pour les tests locaux.
 - **GitHub Actions** pour les pipelines CI/CD.
+- **Docker** (optionnel pour Zowe Sandbox).
 
 ---
 
-## Contribution
+## Configuration Locale
 
-Les contributions sont les bienvenues ! Veuillez ouvrir une issue ou soumettre une pull request pour toute amélioration ou correction.
+1. Installer **Zowe CLI** :
+
+```bash
+npm install -g @zowe/cli
+```
+
+---
+
+## Créer un profil pour Zowe Sandbox (ou mainframe réel si disponible) :
+
+```bash
+zowe profiles create zosmf-profile mainframe-sandbox \
+  --host localhost \
+  --port 1443 \
+  --user demo \
+  --password demo123 \
+  --reject-unauthorized false
+```
+
+---
+
+## Créer un fichier config.json local pour les tests (ajouter à .gitignore) :
+
+```json
+{
+  "zosmf_profile": "mainframe-sandbox",
+  "host": "localhost",
+  "port": 1443,
+  "user": "demo",
+  "password": "demo123",
+  "remote_cobol_path": "/u/USER/COBOL",
+  "remote_jcl_path": "/u/USER/JCL"
+}
+```
+
+---
+
+## Test du Pipeline Localement
+### Compiler et exécuter COBOL localement :
+
+```bash
+cd src/cobol
+cobc -x -o TRAITEMENT-COMPTES-BANQUE TRAITEMENT-COMPTES-BANQUE.cbl -I ../copybooks
+./TRAITEMENT-COMPTES-BANQUE
+```
+
+Vérifier les résultats dans src/data/COMPTES-OUT.DAT.
+
+---
+
+## CI/CD avec GitHub Actions
+
+### Workflows
+
+- **pipeline.yml** : Compile et exécute COBOL localement.
+- **mainframe.yml** : Déploie les fichiers COBOL et JCL sur le mainframe via Zowe CLI et Ansible.
+
+### Exemple GitHub Actions
+
+```yaml
+- name: Install Ansible
+  run: sudo apt-get install -y ansible
+
+- name: Run Ansible Playbook
+  run: ansible-playbook ansible/playbook_deploy.yml -i ansible/inventory.yml
+```
+---
+
+## Ansible Playbook
+
+### Fonctionnalités
+
+1. **Déploiement des fichiers COBOL et JCL**  
+   - Tâches définies dans `roles/mainframe/tasks/deploy.yml`.
+
+2. **Soumission et Monitoring des Jobs JCL**  
+   - Tâches définies dans `roles/mainframe/tasks/monitor.yml`.
+
+### Configuration
+
+- Les variables sont définies dans `roles/mainframe/vars/mainframe_vars.yml`.
+
+---
+
+## Sécurité et GitHub Secrets
+
+- Ne jamais mettre **identifiants réels** dans le repo.
+- Stocker les informations sensibles comme secrets GitHub :
+  - `ZOS_HOST`
+  - `ZOS_USER`
+  - `ZOS_PASS`
+
+### Exemple d’utilisation dans `mainframe.yml` :
+
+```yaml
+zowe profiles create zosmf-profile mainframe-prof \
+  --host ${{ secrets.ZOS_HOST }} \
+  --port 443 \
+  --user ${{ secrets.ZOS_USER }} \
+  --password ${{ secrets.ZOS_PASS }} \
+  --reject-unauthorized false
+```
+---
+## Sources
+
+Voici les principales ressources utilisées pour construire ce projet :
+
+### Documentation COBOL
+
+- [IBM COBOL for Enterprise Developers](https://www.ibm.com/docs/en/cobol)  
+- [GnuCOBOL User Guide](https://gnucobol.sourceforge.io)
+
+### Zowe CLI
+
+- [Zowe CLI Documentation](https://docs.zowe.org)
+
+### Ansible
+
+- [Ansible Documentation](https://docs.ansible.com)
+
+### JCL
+
+- [IBM JCL Reference Guide](https://www.ibm.com/docs/en/zos)
+
+### GitHub Actions
+
+- [GitHub Actions Documentation](https://docs.github.com/actions)
+
+### Tutoriels et Blogs
+
+- [COBOL Tutorials on TutorialsPoint](https://www.tutorialspoint.com/cobol)  
+- [Mainframe DevOps Blog](https://developer.ibm.com/devops/mainframe)
 
 ---
 
