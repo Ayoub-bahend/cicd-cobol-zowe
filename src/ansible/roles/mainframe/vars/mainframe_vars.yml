@@ -1,0 +1,3 @@
+zosmf_profile: "mainframe-prof"
+remote_cobol_path: "/u/USER/COBOL"
+remote_jcl_path: "/u/USER/JCL"
