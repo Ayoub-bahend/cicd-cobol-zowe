@@ -1,42 +1,45 @@
 name: COBOL CI/CD
 
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["COBOL Build & Run"]
+    types:
+      - completed
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Install Zowe CLI
-      run: npm install -g @zowe/cli
+      - name: Install Zowe CLI
+        run: npm install -g @zowe/cli
 
-    - name: Configure Zowe profile
-      run: |
-        zowe profiles create zosmf-profile mainframe-prof \
-          --host ${{ secrets.ZOS_HOST }} \
-          --port 443 \
-          --user ${{ secrets.ZOS_USER }} \
-          --password ${{ secrets.ZOS_PASS }} \
-          --reject-unauthorized false
+      - name: Configure Zowe profile
+        run: |
+          zowe profiles create zosmf-profile mainframe-prof \
+            --host ${{ secrets.ZOS_HOST }} \
+            --port 443 \
+            --user ${{ secrets.ZOS_USER }} \
+            --password ${{ secrets.ZOS_PASS }} \
+            --reject-unauthorized false
 
-    - name: Deploy COBOL & JCL
-      run: bash scripts/deploy.sh
+      - name: Deploy COBOL & JCL
+        run: bash src/scripts/deploy.sh
 
-    - name: Monitor Job Output
-      run: python3 scripts/monitor.py
+      - name: Monitor Job Output
+        run: python3 src/scripts/monitor.py
 
-    - name: Upload Logs as Artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: jes-logs
-        path: ./outputs
+      - name: Upload Logs as Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: jes-logs
+          path: ./outputs

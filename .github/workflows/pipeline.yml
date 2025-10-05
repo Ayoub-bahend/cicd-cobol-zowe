@@ -1,11 +1,11 @@
 name: COBOL Build & Run
 
 on:
+  workflow_dispatch:         
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch:
 
 jobs:
   build-run:
@@ -22,33 +22,19 @@ jobs:
           sudo apt-get install -y gnucobol || sudo apt-get install -y gnucobol3 || sudo apt-get install -y gnucobol4
 
       - name: 📂 Verify project structure
-        run: |
-          echo "Structure du projet :"
-          tree src || find src
+        run: tree src || find src
 
       - name: ⚙️ Compile COBOL program
         working-directory: src/cobol
-        run: |
-          cobc -x -o TRAITEMENT-COMPTES-BANQUE ./TRAITEMENT-COMPTES-BANQUE.cbl \
-            -I ../copybooks
-          echo "✅ Compilation terminée."
+        run: cobc -x -o TRAITEMENT-COMPTES-BANQUE ./TRAITEMENT-COMPTES-BANQUE.cbl -I ../copybooks
 
       - name: ▶️ Run COBOL program
         working-directory: src/cobol
-        run: |
-          echo "Fichier d'entrée :"
-          cat ../data/COMPTES-IN.DAT || echo "(vide)"
-          
-          echo "Exécution du programme..."
-          ./TRAITEMENT-COMPTES-BANQUE
-          
-          echo "✅ Programme exécuté avec succès."
+        run: ./TRAITEMENT-COMPTES-BANQUE
 
       - name: 📄 Show output data
         working-directory: src/data
-        run: |
-          echo "Résultats du traitement :"
-          cat COMPTES-OUT.DAT || echo "⚠️ Aucun fichier de sortie trouvé."
+        run: cat COMPTES-OUT.DAT || echo "⚠️ Aucun fichier de sortie trouvé."
 
       - name: ✅ Job completed
         run: echo "Pipeline COBOL terminée avec succès 🎉"
