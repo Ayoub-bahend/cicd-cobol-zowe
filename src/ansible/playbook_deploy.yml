@@ -1,0 +1,13 @@
+---
+- name: Déployer COBOL et exécuter jobs JCL
+  hosts: mainframe
+  gather_facts: false
+  vars_files:
+    - roles/mainframe/vars/mainframe_vars.yml
+
+  tasks:
+    - name: Include deploy tasks
+      include_tasks: roles/mainframe/tasks/deploy.yml
+
+    - name: Include monitoring tasks
+      include_tasks: roles/mainframe/tasks/monitor.yml
