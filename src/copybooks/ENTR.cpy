@@ -1,5 +1,5 @@
       *****************************************************************
-      * COPYBOOK : COMPTE-ENTREE.cpy
+      * COPYBOOK : ENTREE.cpy
       * Description : Définitions des enregistrements de compte d'entrée
       *****************************************************************
 

@@ -4,23 +4,21 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT FICHIER-ENTREE ASSIGN TO 'COMPTES-IN.DAT'
+           SELECT FICHIER-ENTREE ASSIGN TO 'src/data/COMPTES-IN.DAT'
                ORGANIZATION IS LINE SEQUENTIAL.
-           SELECT FICHIER-SORTIE ASSIGN TO 'COMPTES-OUT.DAT'
+           SELECT FICHIER-SORTIE ASSIGN TO 'src/data/COMPTES-OUT.DAT'
                ORGANIZATION IS LINE SEQUENTIAL.
 
        DATA DIVISION.
        FILE SECTION.
        FD FICHIER-ENTREE.
-            01 ENREGISTREMENT-ENTREE.
-                COPY '../copybooks/COMPTE-ENTREE.cpy'.
+           COPY '../copybooks/ENTR.cpy'.
 
        FD FICHIER-SORTIE.
-           01 ENREGISTREMENT-SORTIE.
-               COPY '../copybooks/COMPTE-SORTIE.cpy'.
+           COPY '../copybooks/SORT.cpy'.
 
        WORKING-STORAGE SECTION.
-           COPY 'CONSTANTES.cpy'.
+           COPY '../copybooks/CST.cpy'.
 
        PROCEDURE DIVISION.
        MAIN-SECTION.
@@ -47,28 +45,26 @@
            END-READ.
 
        CALCULS-COMPTE.
-           COMPUTE WS-INTERET = ENREGISTREMENT-ENTREE.SOLDE-COMPTE
-                               * ENREGISTREMENT-ENTREE.TAUX-INTERET
+           COMPUTE WS-INTERET = SOLDE-COMPTE * TAUX-INTERET
 
-           IF ENREGISTREMENT-ENTREE.TYPE-COMPTE = 'C'
+           IF TYPE-COMPTE = 'C'
                MOVE WS-FRAIS-COMPTE-C TO WS-FRAIS
            ELSE
                MOVE WS-FRAIS-COMPTE-E TO WS-FRAIS
            END-IF
 
-           COMPUTE WS-NOUVEAU-SOLDE = ENREGISTREMENT-ENTREE.SOLDE-COMPTE
+           COMPUTE WS-NOUVEAU-SOLDE = SOLDE-COMPTE
                                        + WS-INTERET - WS-FRAIS
 
-           MOVE ENREGISTREMENT-ENTREE.NUM-COMPTE         TO ENREGISTREMENT-SORTIE.NUM-COMPTE-S
-           MOVE WS-NOUVEAU-SOLDE                          TO ENREGISTREMENT-SORTIE.NOUVEAU-SOLDE-S
-           MOVE WS-INTERET                                TO ENREGISTREMENT-SORTIE.INTERET-CALCULE-S
-           MOVE WS-FRAIS                                  TO ENREGISTREMENT-SORTIE.FRAIS-APPLIQUES-S
+           MOVE NUM-COMPTE         TO NUM-COMPTE-S
+           MOVE WS-NOUVEAU-SOLDE   TO NOUVEAU-SOLDE-S
+           MOVE WS-INTERET         TO INTERET-CALCULE-S
+           MOVE WS-FRAIS           TO FRAIS-APPLIQUES-S
 
            WRITE ENREGISTREMENT-SORTIE
 
-           DISPLAY "Compte traité : " ENREGISTREMENT-ENTREE.NUM-COMPTE
-                   " | Solde init. : " ENREGISTREMENT-ENTREE.SOLDE-COMPTE
+           DISPLAY "Compte traité : " NUM-COMPTE
+                   " | Solde init. : " SOLDE-COMPTE
                    " | Intérêt : " WS-INTERET
                    " | Frais : " WS-FRAIS
                    " | Nouveau solde : " WS-NOUVEAU-SOLDE.
-
