@@ -1,0 +1,5 @@
+mainframe:
+  hosts:
+    sandbox:
+      ansible_host: localhost   # pour Zowe Sandbox Docker
+      ansible_connection: local
