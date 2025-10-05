@@ -1,6 +1,5 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TRAITEMENT-COMPTES-BANQUE.
-       AUTHOR. CHATGPT.
 
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
@@ -12,26 +11,13 @@
 
        DATA DIVISION.
        FILE SECTION.
-
        FD FICHIER-ENTREE.
-       01 ENREGISTREMENT-ENTREE.
-           05 NUM-COMPTE         PIC X(10).
-           05 SOLDE-COMPTE       PIC 9(7)V99.
-           05 TAUX-INTERET       PIC 9V999.
-           05 TYPE-COMPTE        PIC X(01).   *> 'C' = courant, 'E' = épargne
-
+           COPY 'COMPTE-STRUCT.cpy' REPLACING ==ENREGISTREMENT-SORTIE== BY ==DUMMY==.
        FD FICHIER-SORTIE.
-       01 ENREGISTREMENT-SORTIE.
-           05 NUM-COMPTE-S       PIC X(10).
-           05 NOUVEAU-SOLDE-S    PIC 9(7)V99.
-           05 INTERET-CALCULE-S  PIC 9(7)V99.
-           05 FRAIS-APPLIQUES-S  PIC 9(5)V99.
+           COPY 'COMPTE-STRUCT.cpy' REPLACING ==ENREGISTREMENT-ENTREE== BY ==DUMMY==.
 
        WORKING-STORAGE SECTION.
-       01 WS-EOF                 PIC X VALUE 'N'.
-       01 WS-INTERET             PIC 9(7)V99 VALUE 0.
-       01 WS-FRAIS               PIC 9(5)V99 VALUE 0.
-       01 WS-NOUVEAU-SOLDE       PIC 9(7)V99 VALUE 0.
+           COPY 'CONSTANTES.cpy'.
 
        PROCEDURE DIVISION.
        MAIN-SECTION.
