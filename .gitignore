@@ -1,4 +1,5 @@
-# .gitignore
+# Git ignore pour secrets et fichiers temporaires
 .env
 *.local
+ansible/roles/mainframe/vars/*.yml
 src/scripts/config.json
