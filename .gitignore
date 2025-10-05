@@ -1,0 +1,4 @@
+# .gitignore
+.env
+*.local
+src/scripts/config.json
