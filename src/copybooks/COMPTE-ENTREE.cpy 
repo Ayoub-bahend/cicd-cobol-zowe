@@ -1,0 +1,10 @@
+      *****************************************************************
+      * COPYBOOK : COMPTE-ENTREE.cpy
+      * Description : Définitions des enregistrements de compte d'entrée
+      *****************************************************************
+
+       01 ENREGISTREMENT-ENTREE.
+           05 NUM-COMPTE         PIC X(10).
+           05 SOLDE-COMPTE       PIC 9(7)V99.
+           05 TAUX-INTERET       PIC 9V999.
+           05 TYPE-COMPTE        PIC X(01).   *> 'C' = courant, 'E' = épargne

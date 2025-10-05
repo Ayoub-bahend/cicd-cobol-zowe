@@ -12,12 +12,12 @@
        DATA DIVISION.
        FILE SECTION.
        FD FICHIER-ENTREE.
-           01 ENREGISTREMENT-ENTREE.
-               COPY 'COMPTE-STRUCT.cpy'.
+            01 ENREGISTREMENT-ENTREE.
+                COPY '../copybooks/COMPTE-ENTREE.cpy'.
 
        FD FICHIER-SORTIE.
            01 ENREGISTREMENT-SORTIE.
-               COPY 'COMPTE-STRUCT.cpy'.
+               COPY '../copybooks/COMPTE-SORTIE.cpy'.
 
        WORKING-STORAGE SECTION.
            COPY 'CONSTANTES.cpy'.
@@ -47,25 +47,28 @@
            END-READ.
 
        CALCULS-COMPTE.
-           COMPUTE WS-INTERET = SOLDE-COMPTE * TAUX-INTERET.
+           COMPUTE WS-INTERET = ENREGISTREMENT-ENTREE.SOLDE-COMPTE
+                               * ENREGISTREMENT-ENTREE.TAUX-INTERET
 
-           IF TYPE-COMPTE = 'C'
+           IF ENREGISTREMENT-ENTREE.TYPE-COMPTE = 'C'
                MOVE WS-FRAIS-COMPTE-C TO WS-FRAIS
            ELSE
                MOVE WS-FRAIS-COMPTE-E TO WS-FRAIS
-           END-IF.
+           END-IF
 
-           COMPUTE WS-NOUVEAU-SOLDE = SOLDE-COMPTE + WS-INTERET - WS-FRAIS.
+           COMPUTE WS-NOUVEAU-SOLDE = ENREGISTREMENT-ENTREE.SOLDE-COMPTE
+                                       + WS-INTERET - WS-FRAIS
 
-           MOVE NUM-COMPTE         TO NUM-COMPTE-S.
-           MOVE WS-NOUVEAU-SOLDE   TO NOUVEAU-SOLDE-S.
-           MOVE WS-INTERET         TO INTERET-CALCULE-S.
-           MOVE WS-FRAIS           TO FRAIS-APPLIQUES-S.
+           MOVE ENREGISTREMENT-ENTREE.NUM-COMPTE         TO ENREGISTREMENT-SORTIE.NUM-COMPTE-S
+           MOVE WS-NOUVEAU-SOLDE                          TO ENREGISTREMENT-SORTIE.NOUVEAU-SOLDE-S
+           MOVE WS-INTERET                                TO ENREGISTREMENT-SORTIE.INTERET-CALCULE-S
+           MOVE WS-FRAIS                                  TO ENREGISTREMENT-SORTIE.FRAIS-APPLIQUES-S
 
-           WRITE ENREGISTREMENT-SORTIE.
+           WRITE ENREGISTREMENT-SORTIE
 
-           DISPLAY "Compte traité : " NUM-COMPTE
-                   " | Solde init. : " SOLDE-COMPTE
+           DISPLAY "Compte traité : " ENREGISTREMENT-ENTREE.NUM-COMPTE
+                   " | Solde init. : " ENREGISTREMENT-ENTREE.SOLDE-COMPTE
                    " | Intérêt : " WS-INTERET
                    " | Frais : " WS-FRAIS
                    " | Nouveau solde : " WS-NOUVEAU-SOLDE.
+
